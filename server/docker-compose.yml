@@ -1,0 +1,28 @@
+version: "3.9"
+services:
+  postgres_db:
+    image: postgres:14.9-alpine
+    container_name: "train-schedule-db"
+    restart: unless-stopped
+    hostname: postgres
+    ports:
+      - "6543:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=train_schedule
+    volumes:
+      - train-schedule-postgres-data:/var/lib/postgresql/data/
+
+  backend:
+    build: .
+    container_name: "train-schedule-backend"
+    restart: unless-stopped
+    command: npm run start:prod
+    ports:
+      - "3000:3000"
+    depends_on:
+      - postgres_db
+
+volumes:
+  train-schedule-postgres-data:
